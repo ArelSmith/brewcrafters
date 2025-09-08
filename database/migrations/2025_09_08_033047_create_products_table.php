@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->integer('price');
             $table->integer('stock');
-            $table->foreignId('categories_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('category_id')->constrained('product_categories')->cascadeOnDelete();
             $table->enum('status', ['active', 'inactive']);
             $table->softDeletes();
             $table->timestamps();

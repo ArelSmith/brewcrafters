@@ -8,4 +8,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Transaction extends Model
 {
     use SoftDeletes;
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function address() {
+        return $this->belongsTo(ShippingAddress::class);
+    }
+
+    public function items() {
+        return $this->hasMany(TransactionItem::class);
+    }
+
+    public function product() {
+        return $this->belongsTo(Product::class);
+    }
 }
