@@ -9,7 +9,17 @@ class ProductCategory extends Model
 {
     use SoftDeletes;
 
+    protected $guarded = ["id"];
+
     public function product() {
         return $this->belongsTo(Product::class);
+    }
+
+    public function parent() {
+        return $this->belongsTo(ProductCategory::class, 'parent_id');
+    }
+
+    public function children() {
+        return $this->hasMany(ProductCategory::class,'parent_id');
     }
 }

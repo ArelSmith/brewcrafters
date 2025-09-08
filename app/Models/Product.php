@@ -10,6 +10,8 @@ class Product extends Model
 {
     use SoftDeletes;
 
+    protected $guarded = ["id"];
+
     public function category () {
         return $this->hasOne(ProductCategory::class);
     }
