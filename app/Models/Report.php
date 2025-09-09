@@ -14,5 +14,7 @@ class Report extends Model
         return $this->belongsTo(ShippingAddress::class);
     }
 
-
+    public function messages() {
+        return $this->hasMany(ReportMessage::class);
+    }
 }
