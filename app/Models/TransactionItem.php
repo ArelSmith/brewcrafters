@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class TransactionItem extends Model
 {
     use SoftDeletes;
+
+    protected $fillable = [
+        'transaction_id',
+        'product_id',
+        'quantity',
+        'price',
+    ];
 }

@@ -9,7 +9,11 @@ class ProductCategory extends Model
 {
     use SoftDeletes;
 
-    protected $guarded = ["id"];
+    protected $fillable = [
+        'name',
+        'slug',
+        'parent_id',
+    ];
 
     public function product() {
         return $this->belongsTo(Product::class);

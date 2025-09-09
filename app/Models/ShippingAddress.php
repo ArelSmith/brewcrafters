@@ -10,6 +10,17 @@ class ShippingAddress extends Model
 {
     use SoftDeletes;
 
+    protected $fillable = [
+        'user_id',
+        'label',
+        'recipient_name',
+        'phone',
+        'address_line',
+        'city',
+        'province',
+        'postal_code',
+        'is_default',
+    ];
     public function user() {
         return $this->belongsTo(User::class);
     }

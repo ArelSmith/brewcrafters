@@ -1,30 +1,22 @@
 <?php
 
-namespace App\Filament\Resources\Transactions\Tables;
+namespace App\Filament\Resources\BlogPosts\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Columns\SelectColumn;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
-class TransactionsTable
+class BlogPostsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('user.name'),
-                TextColumn::make('address.address_line'),
-                TextColumn::make('subtotal')->label('Sub Total'),
-                TextColumn::make('grandtotal')->label('Grand Total'),
-                SelectColumn::make('status'),
-                TextColumn::make('payment_method'),
-                TextColumn::make('tracking_number'),
+                //
             ])
             ->filters([
                 TrashedFilter::make(),

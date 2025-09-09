@@ -10,7 +10,20 @@ class Product extends Model
 {
     use SoftDeletes;
 
-    protected $guarded = ["id"];
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'weight',
+        'price',
+        'stock',
+        'image',
+        'parent_id',
+        'child_id',
+        'child_2_id',
+        'child_3_id',
+        'status',
+    ];
 
     public function categories () {
         return $this->belongsToMany(ProductCategory::class, 'product_category_product');

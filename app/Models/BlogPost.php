@@ -9,6 +9,14 @@ class BlogPost extends Model
 {
     use SoftDeletes;
 
+    protected $fillable = [
+        'user_id',
+        'title',
+        'slug',
+        'body',
+        'thumbnail',
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }
