@@ -7,7 +7,8 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
-use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -19,10 +20,13 @@ class ProductsTable
         return $table
             ->columns([
                 TextColumn::make("name"),
+                ImageColumn::make("image"),
                 TextColumn::make("slug"),
-                TextColumn::make("price"),
+                TextColumn::make("price")
+                    ->formatStateUsing(fn($state) => 'Rp. ' . number_format($state, 0, ".", ",")),
+                TextColumn::make("weight")
+                    ->default('-'),
                 TextColumn::make("stock"),
-
             ])
             ->filters([
                 TrashedFilter::make(),

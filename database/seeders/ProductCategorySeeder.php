@@ -15,25 +15,63 @@ class ProductCategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Coffee Beans' => ['Light Roast', 'Medium Roast', 'Dark Roast', 'Espresso Roast'],
-            'Ready to Drink' => ['Cold Brew', 'Nitro Cold Brew', 'Instant Coffee'],
-            'Brewing Equipment' => ['Pour Over', 'French Press', 'Espresso Machines'],
+            'Coffee Beans' => [
+                'Manual Brew' => [
+                    'Light Roast' => $this->getProcess(),
+                    'Medium Roast' => $this->getProcess(),
+                ],
+                'Espresso Brew' => [
+                    'Dark Roast',
+                ],
+            ],
+            'Ready to Drink' => [
+                'Cold Brew',
+                'Nitro Cold Brew',
+                'Instant Coffee',
+            ],
+            'Brewing Equipment' => [
+                'Pour Over',
+                'French Press',
+                'Espresso Machines',
+            ],
         ];
 
-        foreach ($categories as $parentName => $children) {
-            $parent = ProductCategory::create([
-                'name' => $parentName,
-                'slug' => Str::slug($parentName),
-                'parent_id' => null,
-            ]);
+        $this->createCategories($categories);
+    }
 
-            foreach ($children as $childName) {
+    private function createCategories(array $categories, $parentId = null)
+    {
+        foreach ($categories as $key => $value) {
+            if (is_array($value)) {
+                // Key is parent name
+                $category = ProductCategory::create([
+                    'name' => $key,
+                    'slug' => Str::slug($key),
+                    'parent_id' => $parentId,
+                ]);
+                $this->createCategories($value, $category->id);
+            } else {
+                // Value is single child name
                 ProductCategory::create([
-                    'name' => $childName,
-                    'slug' => Str::slug($childName),
-                    'parent_id' => $parent->id,
+                    'name' => $value,
+                    'slug' => Str::slug($value),
+                    'parent_id' => $parentId,
                 ]);
             }
         }
+    }
+
+    private function getProcess() {
+        return [
+            'Natural',
+            'Anaerobic Natural',
+            'Carbonic Maceration',
+            'Yellow Honey Process',
+            'Red Honey Process',
+            'Black Honey Process',
+            'Semi Washed',
+            'Full Washed',
+            'Wet Hulled',
+        ];
     }
 }

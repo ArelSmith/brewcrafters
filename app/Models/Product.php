@@ -12,7 +12,7 @@ class Product extends Model
 
     protected $guarded = ["id"];
 
-    public function category () {
-        return $this->hasOne(ProductCategory::class);
+    public function categories () {
+        return $this->belongsToMany(ProductCategory::class, 'product_category_product');
     }
 }

@@ -16,9 +16,14 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description');
+            $table->integer('weight')->nullable();
             $table->integer('price');
             $table->integer('stock');
-            $table->foreignId('category_id')->constrained('product_categories')->cascadeOnDelete();
+            $table->string('image');
+            $table->foreignId('parent_id')->nullable()->constrained('product_categories')->cascadeOnDelete();
+            $table->foreignId('child_id')->nullable()->constrained('product_categories')->cascadeOnDelete();
+            $table->foreignId('child_2_id')->nullable()->constrained('product_categories')->cascadeOnDelete();
+            $table->foreignId('child_3_id')->nullable()->constrained('product_categories')->cascadeOnDelete();
             $table->enum('status', ['active', 'inactive']);
             $table->softDeletes();
             $table->timestamps();
