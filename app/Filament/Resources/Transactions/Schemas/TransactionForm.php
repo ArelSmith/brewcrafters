@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\ProductCategories\Schemas;
+namespace App\Filament\Resources\Transactions\Schemas;
 
 use Filament\Schemas\Schema;
 
-class ProductCategoryForm
+class TransactionForm
 {
     public static function configure(Schema $schema): Schema
     {

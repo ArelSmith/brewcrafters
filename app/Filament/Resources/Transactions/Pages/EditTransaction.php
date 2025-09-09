@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\ProductCategories\Pages;
+namespace App\Filament\Resources\Transactions\Pages;
 
-use App\Filament\Resources\ProductCategories\ProductCategoryResource;
+use App\Filament\Resources\Transactions\TransactionResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditProductCategory extends EditRecord
+class EditTransaction extends EditRecord
 {
-    protected static string $resource = ProductCategoryResource::class;
+    protected static string $resource = TransactionResource::class;
 
     protected function getHeaderActions(): array
     {

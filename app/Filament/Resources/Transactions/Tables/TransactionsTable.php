@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ProductCategories\Tables;
+namespace App\Filament\Resources\Transactions\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -10,7 +10,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
-class ProductCategoriesTable
+class TransactionsTable
 {
     public static function configure(Table $table): Table
     {
