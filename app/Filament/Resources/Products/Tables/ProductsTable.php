@@ -21,7 +21,8 @@ class ProductsTable
     {
         return $table
             ->columns([
-                TextColumn::make("name"),
+                TextColumn::make("name")
+                    ->searchable(),
                 ImageColumn::make("image"),
                 TextColumn::make("slug"),
                 TextColumn::make("price")

@@ -19,7 +19,8 @@ class BlogPostsTable
         return $table
             ->columns([
                 TextColumn::make('user.name'),
-                TextColumn::make('title'),
+                TextColumn::make('title')
+                    ->searchable(),
                 TextColumn::make('slug'),
                 TextColumn::make('category.name'),
                 ImageColumn::make('thumbnail')

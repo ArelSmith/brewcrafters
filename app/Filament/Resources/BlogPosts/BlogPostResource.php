@@ -14,10 +14,11 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class BlogPostResource extends Resource
 {
+    protected static ?string $recordTitleAttribute = "title";
     protected static ?string $model = BlogPost::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
@@ -48,11 +49,20 @@ class BlogPostResource extends Resource
         ];
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+    public static function getEloquentQuery(): Builder {
+        if(filament()->getCurrentPanel()->getId() === 'user') {
+            return parent::getEloquentQuery()->where('user_id', Auth::id());
+        }
+
+        return parent::getEloquentQuery();
     }
+
+
+
+    protected function mutateFormDataBeforeCreate($data) {
+        $data['user_id'] = Auth::id();
+        return $data;
+    }
+
+
 }
