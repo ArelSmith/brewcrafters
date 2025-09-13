@@ -17,12 +17,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        $guestUser = User::create([
+            'name' => 'Shida',
+            'email' => 'shida@gmail.com',
+            'password' => Hash::make('shida#1234'),
+        ]);
         $adminUser = User::factory()->create([
             'name' => 'admin',
             'email' => 'admin@brewcrafters.test',
-            'password' => Hash::make('admin#1234')
+            'password' => Hash::make('admin#1234'),
         ]);
 
         $this->call(ProductCategorySeeder::class);
@@ -69,58 +72,45 @@ class DatabaseSeeder extends Seeder
             'access user panel',
 
             // Settings
-            'manage settings'
+            'manage settings',
         ];
 
-        foreach($permissions as $permission) {
+        foreach ($permissions as $permission) {
             Permission::firstOrCreate([
                 'name' => $permission,
-                'guard_name' => 'web'
+                'guard_name' => 'web',
             ]);
         }
 
         $adminRole = Role::firstOrCreate([
             'name' => 'admin',
-            'guard_name' => 'web'
+            'guard_name' => 'web',
         ]);
 
         $guestRole = Role::firstOrCreate([
             'name' => 'guest',
-            'guard_name' => 'web'
+            'guard_name' => 'web',
         ]);
 
         $customerRole = Role::firstOrCreate([
             'name' => 'customer',
-            'guard_name' => 'web'
+            'guard_name' => 'web',
         ]);
 
         $writerRole = Role::firstOrCreate([
             'name' => 'writer',
-            'guard_name' => 'web'
+            'guard_name' => 'web',
         ]);
 
         $adminRole->givePermissionTo(Permission::all());
 
-        $guestRole->givePermissionTo([
-            'view products',
-            'view posts',
-            'view categories',
-        ]);
+        $guestRole->givePermissionTo(['view products', 'view posts', 'view categories']);
 
-        $customerRole->givePermissionTo([
-            'view products',
-            'view posts',
-            'view categories',
-            'add to cart',
-            'view orders',
-            'cancel orders'
-        ]);
+        $customerRole->givePermissionTo(['view products', 'view posts', 'view categories', 'add to cart', 'view orders', 'cancel orders']);
 
-        $writerRole->givePermissionTo([
-            'create posts',
-            'edit posts',
-        ]);
+        $writerRole->givePermissionTo(['create posts', 'edit posts']);
 
         $adminUser->assignRole($adminRole);
+        $guestUser->assignRole($guestRole);
     }
 }

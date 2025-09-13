@@ -2,9 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use Spatie\Permission\PermissionServiceProvider;
-use Filament\Facades\Filament;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,11 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Filament::serving(function () {
-            Filament::registerRenderHook(
-                'panels::footer',
-                fn (): string => ''
-            );
-        });
+        Vite::prefetch(concurrency: 3);
     }
 }
