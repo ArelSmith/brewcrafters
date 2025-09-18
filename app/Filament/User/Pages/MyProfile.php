@@ -4,6 +4,7 @@ namespace App\Filament\User\Pages;
 
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
@@ -11,6 +12,7 @@ use Filament\Pages\Page;
 class MyProfile extends Page implements HasForms
 {
     use InteractsWithForms;
+    public ?array $data = [];
     protected string $view = 'filament.user.pages.my-profile';
     protected static ?string $navigationLabel = 'My Profile';
     protected static ?int $navigationSort = 2;
@@ -18,18 +20,15 @@ class MyProfile extends Page implements HasForms
     public function mount(): void {
         $user = Auth::user();
 
-        // dd($user);
-
         $this->form->fill([
-            'name'=> $user->name,
-            'email'=> $user->email,
-            'phone'=> $user->phone,
-            'password'=> '',
-            'image' => $user->image,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone
         ]);
     }
 
-    protected function getFormSchema(): array {
+    protected function getFormSchema(): array
+    {
         return [
             TextInput::make('name')
                 ->label('Name')
@@ -41,33 +40,27 @@ class MyProfile extends Page implements HasForms
                 ->required()
                 ->maxLength(255),
             TextInput::make('phone')
-                ->label('Phone')
-                ->tel()
-                ->maxLength(20),
+                ->label('Phone Number')
+                ->numeric()
+                ->required()
+                ->disabled(fn () => !Auth::user()->phone)
+                ->placeholder(fn () => Auth::user()->phone ? null : "This user doesn't have any number")
+                ->helperText(fn () => !Auth::user()->phone ? 'Contact admin to update your phone number' : null)
+                ->maxLength(255),
             TextInput::make('password')
-                ->label('Password')
+                ->label('New Password')
                 ->password()
                 ->minLength(8)
                 ->maxLength(255)
                 ->dehydrated(fn ($state) => filled($state))
-                ->dehydrateStateUsing(fn ($state) => bcrypt($state))
+                ->rule('confirmed')
                 ->helperText('Leave blank to keep current password.'),
         ];
     }
 
-
-    protected function save(): void {
-        $data = $this->form->getState();
-
-        $user = Auth::user();
-        $user->name = $data['name'] ?? $user->name;
-        $user->email = $data['email'] ?? $user->email;
-        $user->phone = $data['phone'] ?? $user->phone;
-        if(!empty($data['image'])) {
-            $user->image = $data['image'];
-        }
-        $user->save();
-
-        $this->notify('success', 'Profile updated successfully.');
+    public function form(Schema $form): Schema
+    {
+        return $form->schema($this->getFormSchema())->model(Auth::user())->statePath('data');
     }
+
 }
