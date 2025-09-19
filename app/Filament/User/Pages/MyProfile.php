@@ -5,6 +5,7 @@ namespace App\Filament\User\Pages;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\TextInput;
@@ -54,24 +55,22 @@ class MyProfile extends Page implements HasForms
                 ->helperText(fn () => !Auth::user()->phone ? 'Contact admin to update your phone number' : null)
                 ->maxLength(255)
                 ->dehydrated(true),
-            TextInput::make('password')
-                ->label('New Password')
-                ->password()
-                ->minLength(8)
-                ->maxLength(255)
-                ->dehydrated(fn ($state) => filled($state))
-                ->rule('confirmed')
-                ->helperText('Leave blank to keep current password.'),
+            // TextInput::make('password')
+            //     ->label('New Password')
+            //     ->password()
+            //     ->minLength(8)
+            //     ->maxLength(255)
+            //     ->dehydrated(fn ($state) => filled($state))
+            //     ->rule('confirmed')
+            //     ->helperText('Leave blank to keep current password.'),
              FileUpload::make('image')
                 ->label('Upload new profile picture')
                 ->directory('profile-photos')
-                ->preserveFilenames()
                 ->visibility('public')
                 ->image()
                 ->imageEditor()
                 ->dehydrated(true)
-                ->required(fn () => Auth::user()?->image === null)
-                
+
         ];
     }
 
@@ -89,7 +88,7 @@ class MyProfile extends Page implements HasForms
             ->operation('edit');
     }
 
-    protected function getFormStatePath(): string 
+    protected function getFormStatePath(): string
     {
         return 'data';
     }
@@ -97,14 +96,20 @@ class MyProfile extends Page implements HasForms
     public function submit(): void
     {
         $data = $this->form->getState();
-        
+
+        // dd($data);
+
         // Only update password if it's provided
         if (empty($data['password'])) {
             unset($data['password']);
         }
-        
+
         $this->getFormModel()->update($data);
-        
-        session()->flash('status', 'Profile updated successfully!');
+
+        // session()->flash('status', 'Profile updated successfully!');
+        Notification::make()
+            ->success()
+            ->title('Profile updated successfully!')
+            ->send();
     }
 }
