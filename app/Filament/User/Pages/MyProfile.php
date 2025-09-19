@@ -2,90 +2,78 @@
 
 namespace App\Filament\User\Pages;
 
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Auth;
-use Filament\Forms\Components\TextInput;
+use Filament\Tables\Table;
 use Filament\Pages\Page;
-use App\Models\User;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use BackedEnum;
+use UnitEnum;
+
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\ImageColumn;
+use Illuminate\Database\Eloquent\Model;
 
 class MyProfile extends Page implements HasForms
 {
     use InteractsWithForms;
     public ?array $data = [];
-    public ?User $user = null;
-    protected string $view = 'filament.user.pages.my-profile';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::UserCircle;
+    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+    protected static ?string $title = 'Edit Profile';
     protected static ?string $navigationLabel = 'My Profile';
-    protected static ?int $navigationSort = 2;
-    public function mount(): void {
+    protected static ?int $navigationSort = 1;
+    protected string $view = 'filament.user.pages.my-profile';
+
+    public function mount(): void
+    {
         $user = Auth::user();
 
         $this->form->fill([
             'name' => $user->name,
             'email' => $user->email,
-            'phone' => $user->phone,
             'image' => $user->image,
         ]);
+    }
+
+    public function schema(Schema $schema): Schema
+    {
+        return $schema->components($this->getFormSchema())->statePath('data');
     }
 
     protected function getFormSchema(): array
     {
         return [
-            TextInput::make('name')
-                ->label('Name')
-                ->required()
-                ->maxLength(255)
-                ->dehydrated(true),
-            TextInput::make('email')
-                ->label('Email')
-                ->email()
-                ->required()
-                ->maxLength(255)
-                ->dehydrated(true),
-            TextInput::make('phone')
-                ->label('Phone Number')
-                ->numeric()
-                ->required(fn () => (bool) Auth::user()->phone)
-                ->disabled(fn () => !Auth::user()->phone)
-                ->placeholder(fn () => Auth::user()->phone ? null : "This user doesn't have any number")
-                ->helperText(fn () => !Auth::user()->phone ? 'Contact admin to update your phone number' : null)
-                ->maxLength(255)
-                ->dehydrated(true),
-            // TextInput::make('password')
-            //     ->label('New Password')
-            //     ->password()
-            //     ->minLength(8)
-            //     ->maxLength(255)
-            //     ->dehydrated(fn ($state) => filled($state))
-            //     ->rule('confirmed')
-            //     ->helperText('Leave blank to keep current password.'),
-             FileUpload::make('image')
-                ->label('Upload new profile picture')
-                ->directory('profile-photos')
-                ->visibility('public')
-                ->image()
-                ->imageEditor()
-                ->dehydrated(true)
-
+            Section::make('Profile Picture')
+                ->description('Update your profile picture.')
+                ->aside()
+                ->schema([
+                    FileUpload::make('image')
+                    ->label('Profile Picture')
+                    ->image()
+                    ->imageEditor()
+                    ->avatar()
+                    ->maxSize(1024)
+                    ->directory('profile-photos')
+                    ->preserveFilenames()
+                    ->columnSpanFull()
+                ])
+                ->columns(1),
+            Section::make('Profile Information')
+                ->description('Update your account\'s profile information and email address.')
+                ->aside()
+                ->schema([TextInput::make('name')->label('Name')->required()->maxLength(255)->dehydrated(true)->columnSpanFull()])
+                ->columns(2),
         ];
     }
 
-    protected function getFormModel()
+    protected function getFormModel(): Model|string|null
     {
         return Auth::user();
-    }
-
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema($this->getFormSchema())
-            ->model($this->getFormModel())
-            ->statePath('data')
-            ->operation('edit');
     }
 
     protected function getFormStatePath(): string
@@ -93,23 +81,10 @@ class MyProfile extends Page implements HasForms
         return 'data';
     }
 
-    public function submit(): void
+    public static function table(Table $table): Table
     {
-        $data = $this->form->getState();
-
-        // dd($data);
-
-        // Only update password if it's provided
-        if (empty($data['password'])) {
-            unset($data['password']);
-        }
-
-        $this->getFormModel()->update($data);
-
-        // session()->flash('status', 'Profile updated successfully!');
-        Notification::make()
-            ->success()
-            ->title('Profile updated successfully!')
-            ->send();
+        return $table->columns([
+            ImageColumn::make('image')->label('Profile')->circular(), // makes it round
+        ]);
     }
 }

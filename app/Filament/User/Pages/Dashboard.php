@@ -13,6 +13,7 @@ class Dashboard extends Page
 {
     public ?User $user = null;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Home;
+    protected static ?string $slug = 'user';
     protected string $view = 'filament.user.pages.dashboard';
 
     protected static ?string $title = 'Dashboard';
