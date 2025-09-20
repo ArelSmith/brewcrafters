@@ -19,6 +19,8 @@ use UnitEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Grid;
 
 class MyProfile extends Page implements HasForms
 {
@@ -39,6 +41,8 @@ class MyProfile extends Page implements HasForms
             'name' => $user->name,
             'email' => $user->email,
             'image' => $user->image,
+            'country_code' => $user->country_code,
+            'phone' => $user->phone,
         ]);
     }
 
@@ -73,7 +77,27 @@ class MyProfile extends Page implements HasForms
                 ->schema([
                     TextInput::make('name')->label('Name')->required()->maxLength(255)->dehydrated(true)->columnSpanFull(), 
                     TextInput::make('email')->label('Email')->required()->maxLength(255)->dehydrated(true)->columnSpanFull(), 
-                    TextInput::make('phone')->label('Phone Number')->tel()->maxLength(255)->dehydrated(true)->placeholder('Add your number here!')->columnSpanFull()
+                    Grid::make(3)
+                        ->schema([
+                            Select::make('country_code')
+                                ->label('Code')
+                                ->options([
+                                    '+62' => '+62',
+                                ])
+                                ->default('+62')
+                                ->searchable()
+                                ->required()
+                                ->columnSpan(1),
+
+                            // Phone Number Field
+                            TextInput::make('phone')
+                                ->label('Phone Number')
+                                ->placeholder('81234567890')
+                                ->required()
+                                ->regex('/^[0-9]{6,15}$/') // Only numbers, 6–15 digits
+                                ->maxLength(15)
+                                ->columnSpan(2),
+                        ]),
                 ])
                 ->columns(2),
             Section::make('Change Password')
@@ -131,6 +155,7 @@ class MyProfile extends Page implements HasForms
                 ->color('primary')
                 ->action(function () {
                     $data = $this->form->getState();
+                    // $data['phone'] = $data['country_code'] . $data['phone'];
                     // Log::info('Form Data: ', $data);
                     if(isset($data['password']) && isset($data['new_password']) && isset($data['new_password_confirmation']) && $data['new_password']) {
                         $hashedOldPassword = Auth::user()->password;
