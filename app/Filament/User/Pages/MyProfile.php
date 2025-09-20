@@ -73,7 +73,7 @@ class MyProfile extends Page implements HasForms
                 ->schema([
                     TextInput::make('name')->label('Name')->required()->maxLength(255)->dehydrated(true)->columnSpanFull(), 
                     TextInput::make('email')->label('Email')->required()->maxLength(255)->dehydrated(true)->columnSpanFull(), 
-                    TextInput::make('phone')->label('Phone Number')->maxLength(255)->dehydrated(true)->placeholder('Add your number here!')->columnSpanFull()
+                    TextInput::make('phone')->label('Phone Number')->tel()->maxLength(255)->dehydrated(true)->placeholder('Add your number here!')->columnSpanFull()
                 ])
                 ->columns(2),
             Section::make('Change Password')
@@ -86,6 +86,7 @@ class MyProfile extends Page implements HasForms
                         ->revealable()
                         ->dehydrated(true)
                         ->columnSpanFull()
+                        ->requiredWith('new_password')
                         ->placeholder('Leave blank to keep current password'),
                     TextInput::make('new_password')
                         ->label('New Password')
@@ -95,6 +96,7 @@ class MyProfile extends Page implements HasForms
                         ->columnSpanFull()
                         ->minLength(8)
                         ->maxLength(255)
+                        ->requiredWith('password')
                         ->placeholder('Leave blank to keep current password'),
                     TextInput::make('new_password_confirmation')
                         ->label('Confirm New Password')
@@ -103,6 +105,7 @@ class MyProfile extends Page implements HasForms
                         ->dehydrated(true)
                         ->columnSpanFull()
                         ->same('new_password')
+                        ->requiredWith('new_password')
                         ->placeholder('Leave blank to keep current password'),
                 ])
                 ->columns(2),
@@ -128,34 +131,29 @@ class MyProfile extends Page implements HasForms
                 ->color('primary')
                 ->action(function () {
                     $data = $this->form->getState();
-
-                    if (empty($data['password'])) {
-                        unset($data['password']);
-                    }
-
-                    if(empty($data['new_password'])) {
-                        unset($data['new_password']);
-                    } else {
+                    // Log::info('Form Data: ', $data);
+                    if(isset($data['password']) && isset($data['new_password']) && isset($data['new_password_confirmation']) && $data['new_password']) {
                         $hashedOldPassword = Auth::user()->password;
-                        if(Hash::check($data['new_password'], $hashedOldPassword)) {
-                            Notification::make()
-                                ->danger()
-                                ->title('The new password cannot be the same as the current password.')
-                                ->send();
-                            return;
-                        } else {
-                            if($data['new_password'] !== $data['new_password_confirmation']) {
+                        if(isset($data['password']) && Hash::check($data['password'], $hashedOldPassword)) {
+                            if($data['new_password'] === $data['new_password_confirmation']) {
+                                $data['password'] = Hash::make($data['new_password']);
+                            } else {
                                 Notification::make()
                                     ->danger()
-                                    ->title('The new password and confirmation do not match.')
+                                    ->title('New password and confirmation do not match.')
                                     ->send();
                                 return;
-                            } else {
-                                $data['password'] = Hash::make($data['new_password']);
-                                unset($data['new_password']);
-                                unset($data['new_password_confirmation']);
                             }
+                        } else {
+                            Notification::make()
+                                ->danger()
+                                ->title('Current password is incorrect.')
+                                ->send();
+                            return;
                         }
+                    }
+                    if (empty($data['password'])) {
+                        unset($data['password']);
                     }
                     $this->getFormModel()->update($data);
 
