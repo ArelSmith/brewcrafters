@@ -21,6 +21,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'image',
         'password',
     ];
 
@@ -45,5 +46,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getAvatarUrlAttribute() {
+        if($this->image) {
+            return asset('storage/' . $this->image);
+        }
+
+        $name = urlencode($this->name);
+        return "https://ui-avatars.com/api/?name={$name}&background=random&color=fff";
     }
 }
