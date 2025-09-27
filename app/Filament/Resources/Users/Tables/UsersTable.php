@@ -20,7 +20,7 @@ class UsersTable
                 ImageColumn::make('avatar_url')
                     ->label("Avatar")
                     ->circular()
-                    ->size(40),
+                    ->width(40),
                 TextColumn::make("name"),
                 TextColumn::make("email"),
                 TextColumn::make("roles.name"),
