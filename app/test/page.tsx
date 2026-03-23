@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { Button } from "@/components/ui/button";
 
 const TestPage = async () => {
   const supabase = await createClient();
@@ -13,6 +14,7 @@ const TestPage = async () => {
       {products?.map((item) => (
         <div key={item.id}>
           <h2>{item.name}</h2>
+          <Button className="bg-blue-600">Add to Cart</Button>
         </div>
       ))}
     </main>
