@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
+import { AuthError } from "@/components/shared/auth-error";
 import {
   Card,
   CardContent,
@@ -15,6 +17,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { login } from "@/app/auth/actions";
 
 export function LoginForm({
   className,
@@ -30,12 +33,20 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <Suspense
+            fallback={
+              <div className="h-10 w-full animate-pulse bg-gray-100 mb-4 rounded" />
+            }
+          >
+            <AuthError />
+          </Suspense>
+          <form method="POST">
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
@@ -51,10 +62,12 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit" formAction={login}>
+                  Login
+                </Button>
                 <Button variant="outline" type="button">
                   Login with Google
                 </Button>

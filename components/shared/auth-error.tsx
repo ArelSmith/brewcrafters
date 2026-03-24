@@ -3,11 +3,26 @@
 import { useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 export function AuthError() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
+  const pathname = usePathname();
   const message = searchParams.get("message");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (error || message) {
+      const timeout = setTimeout(() => {
+        router.replace(pathname);
+      }, 5000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [error, message, router, pathname]);
 
   if (error) {
     return (

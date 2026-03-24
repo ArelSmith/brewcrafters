@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -41,7 +41,7 @@ export async function register(formData: FormData) {
     password,
     options: {
       data: {
-        username,
+        username: username,
       },
     },
   });
@@ -53,6 +53,21 @@ export async function register(formData: FormData) {
   revalidatePath("/");
   redirect(
     "/login?message=" +
-      encodeURIComponent("Account created successfully. Please login."),
+      encodeURIComponent(
+        "Account created successfully. Please check email to verify then login.",
+      ),
   );
+}
+
+export async function logout() {
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    redirect("/dashboard?error=" + encodeURIComponent(error.message));
+  }
+
+  revalidatePath("/");
+  redirect("/login?message=" + encodeURIComponent("Logged out successfully"));
 }
