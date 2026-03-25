@@ -40,7 +40,7 @@ const Navbar = () => {
   }, [supabase]);
 
   return (
-    <header className="h-20 px-4">
+    <header className="h-20 px-4 fixed top-0 left-0 right-0 backdrop-blur-sm z-50 ">
       <nav className="flex h-full max-w-10/12 mx-auto justify-between items-center">
         {/* 1. Brand/Logo */}
         <h1 className="text-2xl font-semibold drop-shadow-6xl">
@@ -68,7 +68,7 @@ const Navbar = () => {
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <NavigationMenuTrigger>Products</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-100 gap-3 p-4">
@@ -76,11 +76,18 @@ const Navbar = () => {
                   <li>Item 2</li>
                 </ul>
               </NavigationMenuContent>
+            </NavigationMenuItem> */}
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link href="/products" className="hover:text-accent transition">
+                  Products
+                </Link>
+              </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link href="/blog" className="hover:text-accent transition">
-                  Blog
+                <Link href="/blogs" className="hover:text-accent transition">
+                  Blogs
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
@@ -107,7 +114,13 @@ const Navbar = () => {
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-100 gap-3 p-4 decoration-none">
-                      <li>Dashboard</li>
+                      <li>
+                        <Link href="/dashboard">
+                          <Button size="sm" type="submit">
+                            Dashboard
+                          </Button>
+                        </Link>
+                      </li>
                       <li>
                         <form action={logout}>
                           <Button variant="destructive" size="sm" type="submit">

@@ -1,6 +1,8 @@
 import React from "react";
+import { syncProfile } from "@/services/profile-services";
 
-const Dashboard = () => {
+const Dashboard = async () => {
+  await syncProfile();
   return <div>Ini Dashboard</div>;
 };
 
