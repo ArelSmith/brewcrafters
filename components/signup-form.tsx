@@ -1,3 +1,5 @@
+"use client";
+
 import { register } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,8 +19,15 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AuthError } from "./shared/auth-error";
+import { useState } from "react";
+import { Eye, EyeClosed } from "lucide-react";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => [
+    setPasswordVisible((visible) => !visible),
+  ];
   return (
     <Card {...props}>
       <CardHeader>
@@ -63,7 +72,21 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input id="password" name="password" type="password" required />
+              <span className="flex flex-row">
+                <Input
+                  id="password"
+                  name="password"
+                  type={passwordVisible ? "text" : "password"}
+                  required
+                />
+                <Button
+                  className="w-20"
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                >
+                  {passwordVisible ? <Eye /> : <EyeClosed />}
+                </Button>
+              </span>
               <FieldDescription>
                 Must be at least 8 characters long.
               </FieldDescription>
@@ -75,7 +98,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <Input
                 id="confirm-password"
                 name="confirm-password"
-                type="password"
+                type={passwordVisible ? "text" : "password"}
                 required
               />
               <FieldDescription>Please confirm your password.</FieldDescription>

@@ -20,7 +20,7 @@ export async function login(formData: FormData) {
     redirect("/login?error=" + encodeURIComponent(error.message));
   }
 
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   redirect("/dashboard");
 }
 
@@ -50,7 +50,7 @@ export async function register(formData: FormData) {
     redirect("/register?error=" + encodeURIComponent(error.message));
   }
 
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   redirect(
     "/login?message=" +
       encodeURIComponent(
@@ -68,6 +68,6 @@ export async function logout() {
     redirect("/dashboard?error=" + encodeURIComponent(error.message));
   }
 
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   redirect("/login?message=" + encodeURIComponent("Logged out successfully"));
 }

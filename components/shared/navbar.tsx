@@ -16,20 +16,15 @@ import {
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 
-const Navbar = () => {
-  const [user, setUser] = useState<User | null>(null);
+interface NavbarProps {
+  initialUser: User | null;
+}
+
+const Navbar = ({ initialUser }: NavbarProps) => {
+  const [user, setUser] = useState<User | null>(initialUser);
   const supabase = createClient();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-    };
-
-    fetchUser();
-
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
@@ -39,6 +34,7 @@ const Navbar = () => {
     return () => subscription.unsubscribe();
   }, [supabase]);
 
+  console.log(initialUser);
   return (
     <header className="h-20 px-4 fixed top-0 left-0 right-0 backdrop-blur-sm z-50 ">
       <nav className="flex h-full max-w-10/12 mx-auto justify-between items-center">
@@ -99,14 +95,6 @@ const Navbar = () => {
         <div className="flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-3 border-l pl-4 border-gray-400">
-              {/* <span className="text-sm font-medium italic">
-                @{user.user_metadata?.username || "brewer"}
-              </span>
-              <form action={logout}>
-                <Button variant="destructive" size="sm" type="submit">
-                  Logout
-                </Button>
-              </form> */}
               <NavigationMenu>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>
@@ -133,6 +121,8 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenu>
             </div>
+          ) : initialUser === undefined ? (
+            <div className="h-10 w-24 bg-gray-200 animate-pulse rounded-3xl" />
           ) : (
             <Link href="/login">
               <Button
