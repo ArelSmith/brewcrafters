@@ -1,4 +1,3 @@
-import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,6 +11,9 @@ import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import { getProducts } from "@/services/product-services";
+export const metadata = {
+  title: "Products",
+};
 
 const ProductPage = async () => {
   const data = await getProducts();

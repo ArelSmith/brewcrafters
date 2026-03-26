@@ -1,12 +1,8 @@
 import Link from "next/link";
 
-export async function generateMetadata() {
-  return {
-    title: "Not Found - Brewcrafters",
-    description: "Halaman yang lo cari nggak ketemu, Rel.",
-  };
-}
-
+export const metadata = {
+  title: "Not Found",
+};
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-[#fff3ef] flex flex-col items-center justify-center text-[#4e342e] p-4">

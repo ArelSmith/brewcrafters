@@ -1,3 +1,7 @@
+export const metadata = {
+  title: "Home - Brewcrafters",
+};
+
 export default function Home() {
   return (
     <>

@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
@@ -18,11 +20,18 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { login } from "@/app/auth/actions";
+import { useState } from "react";
+import { Eye, EyeClosed } from "lucide-react";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    return setPasswordVisible(() => !passwordVisible);
+  };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -62,7 +71,21 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" name="password" type="password" required />
+                <div className="flex flex-row">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={passwordVisible ? "text" : "password"}
+                    required
+                  />
+                  <Button
+                    className="w-20"
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {passwordVisible ? <Eye /> : <EyeClosed />}
+                  </Button>
+                </div>
               </Field>
               <Field>
                 <Button type="submit" formAction={login}>

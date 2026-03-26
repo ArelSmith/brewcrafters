@@ -7,6 +7,21 @@ import { Badge } from "@/components/ui/badge"; // optional kalau ada kategori
 import { ShoppingCart, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+
+  if (!product) throw new Error();
+
+  return {
+    title: product.name,
+  };
+}
+
 export default async function ProductDetailPage({
   params,
 }: {

@@ -10,9 +10,10 @@ const poppins = Poppins({
   weight: "500",
 });
 export const metadata: Metadata = {
-  title: "Home - Brewcrafters",
-  description:
-    "Discover the finest selection of craft beers at Brewcrafters. Explore our curated collection of unique brews, from hoppy IPAs to rich stouts. Whether you're a seasoned beer enthusiast or just starting your craft beer journey, Brewcrafters has something for everyone. Cheers to great taste and unforgettable moments with Brewcrafters!",
+  title: {
+    template: "%s - Brewcrafters",
+    default: "Brewcrafters", // a default is required when creating a template
+  },
 };
 
 export default async function RootLayout({
