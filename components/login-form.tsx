@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { login } from "@/app/auth/actions";
+import { login } from "@/app/actions/auth-actions";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 

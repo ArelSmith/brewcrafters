@@ -16,3 +16,15 @@ export function formatPrice(price: number | null | undefined): string {
 
   return `${formatter.format(price)},-`.replace(/\s/g, "");
 }
+
+export function createSlug(title: string): string {
+  return title
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-") // Ganti spasi sama strip (-)
+    .replace(/[^\w-]+/g, "") // Hapus semua karakter non-word (simbol dll)
+    .replace(/--+/g, "-") // Ganti double strip jadi satu strip
+    .replace(/^-+/, "") // Hapus strip di awal teks
+    .replace(/-+$/, "");
+}

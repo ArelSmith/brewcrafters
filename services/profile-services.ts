@@ -34,3 +34,27 @@ export const syncProfile = cache(async () => {
 
   return existingProfile;
 });
+
+export const getAuthenticatedUserData = cache(async () => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) return null;
+
+  const { data: userData, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user?.id)
+    .single();
+
+  if (profileError) {
+    console.error("Error fetching profile: ", profileError.message);
+    return null;
+  }
+
+  return userData;
+});

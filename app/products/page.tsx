@@ -1,3 +1,4 @@
+import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,40 +17,66 @@ export const metadata = {
 };
 
 const ProductPage = async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user?.id)
+    .single();
+
+  if (error) throw new Error(error.message);
+
   const data = await getProducts();
   return (
     <div className="max-w-10/12 mx-auto mt-25">
       <h1 className="text-5xl font-bold text-center">Products</h1>
-      {data && data.length > 0 ? (
-        <div className="flex flex-wrap mt-10">
-          {data.map((product, index) => (
-            <Card className="relative mx-auto w-full max-w-sm pt-0" key={index}>
-              <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
-              <Image
-                src="https://dummyimage.com/600x400/000/fff"
-                alt="Event cover"
-                className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
-                width={600}
-                height={400}
-                loading="eager"
-              />
-              <CardHeader>
-                <CardAction></CardAction>
-                <CardTitle>{product.name}</CardTitle>
-                <CardDescription>{formatPrice(product.price)}</CardDescription>
-              </CardHeader>
-              <CardFooter className="flex flex-row flex-wrap">
-                <Link href={`/products/${product.slug}`} className="w-auto">
-                  <Button className="w-auto">View Details</Button>
-                </Link>
 
-                <Button variant="outline" className="w-auto">
-                  Add to Cart
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+      {data && data.length > 0 ? (
+        <>
+          <div className="flex flex-wrap mt-10">
+            {data.map((product, index) => (
+              <Card
+                className="relative mx-auto w-full max-w-sm pt-0"
+                key={index}
+              >
+                <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
+                <Image
+                  src="https://dummyimage.com/600x400/000/fff"
+                  alt="Event cover"
+                  className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
+                  width={600}
+                  height={400}
+                  loading="eager"
+                />
+                <CardHeader>
+                  <CardAction></CardAction>
+                  <CardTitle>{product.name}</CardTitle>
+                  <CardDescription>
+                    {formatPrice(product.price)}
+                  </CardDescription>
+                </CardHeader>
+                <CardFooter className="flex flex-row flex-wrap">
+                  <Link href={`/products/${product.slug}`} className="w-auto">
+                    <Button className="w-auto">View Details</Button>
+                  </Link>
+
+                  <Button variant="outline" className="w-auto">
+                    Add to Cart
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+          {profile.is_admin == true && (
+            <Link href="/products/add">
+              <Button className="block mt-5 mx-auto">Add products</Button>
+            </Link>
+          )}
+        </>
       ) : (
         <p>No products available.</p>
       )}

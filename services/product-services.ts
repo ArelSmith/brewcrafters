@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { createClient } from "@/utils/supabase/server";
 
-interface Product {
+export interface Product {
   id: string;
   name: string;
   description: string;
@@ -38,7 +38,10 @@ export const getProductBySlug = cache(async (slug: string) => {
   return data;
 });
 
-export const createProduct = cache(async (id: string, formData: Product) => {
+export const createProduct = async (
+  id: string,
+  formData: Omit<Product, "id">,
+) => {
   const supabase = await createClient();
 
   const { data, error } = await supabase.from("products").insert({
@@ -53,9 +56,9 @@ export const createProduct = cache(async (id: string, formData: Product) => {
   if (error) throw new Error(error.message);
 
   return data;
-});
+};
 
-export const updateProduct = cache(async (id: string, formData: Product) => {
+export const updateProduct = async (id: string, formData: Product) => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -72,9 +75,9 @@ export const updateProduct = cache(async (id: string, formData: Product) => {
   if (error) throw new Error(error.message);
 
   return data;
-});
+};
 
-export const deleteProduct = cache(async (id: string) => {
+export const deleteProduct = async (id: string) => {
   const supabase = await createClient();
 
   const { error } = await supabase.from("products").delete().eq("id", id);
@@ -82,4 +85,4 @@ export const deleteProduct = cache(async (id: string) => {
   if (error) throw new Error(error.message);
 
   return true;
-});
+};
