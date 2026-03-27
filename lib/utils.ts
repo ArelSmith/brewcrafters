@@ -28,3 +28,7 @@ export function createSlug(title: string): string {
     .replace(/^-+/, "") // Hapus strip di awal teks
     .replace(/-+$/, "");
 }
+
+export function now(): string {
+  return new Date().toISOString();
+}
