@@ -3,9 +3,12 @@ import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/services/product-services";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge"; // optional kalau ada kategori
+import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { getAuthenticatedUserData } from "@/services/profile-services";
+
+import DeleteProductButton from "@/components/delete-product";
 
 export async function generateMetadata({
   params,
@@ -28,10 +31,13 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  const user = await getAuthenticatedUserData();
+
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    notFound(); // Balik ke page 404 krem lo tadi
+    notFound();
   }
 
   return (
@@ -50,7 +56,7 @@ export default async function ProductDetailPage({
         <div className="relative aspect-square overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white">
           <Image
             src={
-              product.image_url ||
+              product?.image_url ||
               "https://dummyimage.com/800x800/4e342e/ffffff&text=Brew+Beans"
             }
             alt={product.name}
@@ -107,6 +113,22 @@ export default async function ProductDetailPage({
                 Quick Brew Guide
               </Button>
             </div>
+            {user?.is_admin == true && (
+              <>
+                <h3 className="font-semibold mb-2 text-sm uppercase tracking-widest text-gray-400">
+                  Admin Actions
+                </h3>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    size="lg"
+                    className="flex-1 h-14 rounded-full bg-primary hover:bg-primary/90 text-white gap-2 text-lg shadow-lg shadow-primary/20"
+                  >
+                    <Link href={`/${slug}/edit`}>Update</Link>
+                  </Button>
+                  <DeleteProductButton id={product.id} />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

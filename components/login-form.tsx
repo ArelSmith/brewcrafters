@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
-import { AuthError } from "@/components/shared/auth-error";
+import { AuthError } from "@/components/shared/alert";
 import {
   Card,
   CardContent,

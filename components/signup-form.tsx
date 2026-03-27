@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Suspense } from "react";
-import { AuthError } from "./shared/auth-error";
+import { AuthError } from "./shared/alert";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 

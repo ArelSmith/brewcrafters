@@ -1,4 +1,3 @@
-import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,27 +11,26 @@ import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import { getProducts } from "@/services/product-services";
+import { getAuthenticatedUserData } from "@/services/profile-services";
+import { Suspense } from "react";
+import { AuthError } from "@/components/shared/alert";
 export const metadata = {
   title: "Products",
 };
 
 const ProductPage = async () => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: profile, error } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", user?.id)
-    .single();
-
-  if (error) throw new Error(error.message);
+  const profile = await getAuthenticatedUserData();
 
   const data = await getProducts();
   return (
     <div className="max-w-10/12 mx-auto mt-25">
+      <Suspense
+        fallback={
+          <div className="h-10 w-full animate-pulse bg-gray-100 mb-4 rounded" />
+        }
+      >
+        <AuthError />
+      </Suspense>
       <h1 className="text-5xl font-bold text-center">Products</h1>
 
       {data && data.length > 0 ? (
@@ -71,14 +69,14 @@ const ProductPage = async () => {
               </Card>
             ))}
           </div>
-          {profile.is_admin == true && (
-            <Link href="/products/add">
-              <Button className="block mt-5 mx-auto">Add products</Button>
-            </Link>
-          )}
         </>
       ) : (
         <p>No products available.</p>
+      )}
+      {profile?.is_admin == true && (
+        <Link href="/products/add">
+          <Button className="block mt-5 mx-auto">Add products</Button>
+        </Link>
       )}
     </div>
   );

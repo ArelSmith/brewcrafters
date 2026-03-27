@@ -1,19 +1,23 @@
 import { cache } from "react";
 import { createClient } from "@/utils/supabase/server";
+import { now } from "@/lib/utils";
 
 export interface Product {
-  id: string;
   name: string;
   description: string;
   price: number;
   slug: string;
   image_url: string;
+  deleted_at?: string | null;
 }
 
 export const getProducts = cache(async () => {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.from("products").select("*");
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .is("deleted_at", null);
 
   if (error) {
     console.error("Error fetching products:", error);
@@ -38,10 +42,7 @@ export const getProductBySlug = cache(async (slug: string) => {
   return data;
 });
 
-export const createProduct = async (
-  id: string,
-  formData: Omit<Product, "id">,
-) => {
+export const createProduct = async (formData: Product) => {
   const supabase = await createClient();
 
   const { data, error } = await supabase.from("products").insert({
@@ -50,7 +51,6 @@ export const createProduct = async (
     price: formData.price,
     slug: formData.slug,
     image_url: formData.image_url,
-    user_id: id,
   });
 
   if (error) throw new Error(error.message);
@@ -80,7 +80,12 @@ export const updateProduct = async (id: string, formData: Product) => {
 export const deleteProduct = async (id: string) => {
   const supabase = await createClient();
 
-  const { error } = await supabase.from("products").delete().eq("id", id);
+  const { error } = await supabase
+    .from("products")
+    .update({
+      deleted_at: now(),
+    })
+    .eq("id", id);
 
   if (error) throw new Error(error.message);
 

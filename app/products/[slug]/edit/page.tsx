@@ -3,7 +3,7 @@ import { createNewProductAction } from "@/app/actions/product-actions";
 
 export const metadata = { title: "Add New Product" };
 
-export default function AddProductPage() {
+export default function EditProductPage() {
   return (
     <main className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-sm mt-10">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">
